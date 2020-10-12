@@ -9,6 +9,8 @@ This is a simple Node.js CLI tool that pulls data from Contentful CMS and turns 
 -   [Prerequisites](#prerequisites)
 -   [Installation](#installation)
 -   [Usage](#usage)
+    -   [CLI Usage](#terminal-commands)
+    -   [Javascript Usage](#javascript-usage)
 -   [Configuration](#configuration)
     -   [Environenment Variables](#environment-variables)
     -   [Config File(s)](#config-file)
@@ -24,16 +26,22 @@ Install [Node.js](https://nodejs.org)
 
 ## Installation
 
-with NPM
+**Local install**
 
 ```powershell
 npm install contentful-hugo
+
+# then run
+npx contentful-hugo --init
 ```
 
-with Yarn
+**Global install**
 
 ```powershell
-yarn add contentful-hugo
+npm install -g contentful-hugo
+
+# then run in the root of the new project directory
+contentful-hugo --init
 ```
 
 ## Usage
@@ -45,21 +53,16 @@ Complete [configuration](#configuration) then run the following command(s) in th
 #### When Installed Globally
 
 ```powershell
-## initialize the directory
-contentful-hugo --init
-
-## fetch from contentful
 contentful-hugo
 ```
 
 #### When Installed Locally
 
 ```powershell
-npx contentful-hugo --init
 npx contentful-hugo
 ```
 
-### Flags
+#### Flags
 
 | flag      | aliases | description                                                                                              |
 | --------- | ------- | -------------------------------------------------------------------------------------------------------- |
@@ -70,13 +73,13 @@ npx contentful-hugo
 | --help    |         | Show help                                                                                                |
 | --version |         | Show version number                                                                                      |
 
-#### Preview Mode Example
+##### Preview Mode Example
 
 ```powershell
 contentful-hugo --preview
 ```
 
-#### Multiple Flags Example
+##### Multiple Flags Example
 
 ```powershell
 contentful-hugo --wait=2000 --preview --config="my_custom_config.js"
@@ -86,7 +89,7 @@ contentful-hugo --wait=2000 --preview --config="my_custom_config.js"
 contentful-hugo --wait 2000 --preview --config my_custom_config.js
 ```
 
-### Example Package.json
+#### Example Package.json
 
 ```JSON
 {
@@ -101,6 +104,58 @@ contentful-hugo --wait 2000 --preview --config my_custom_config.js
 ```
 
 In this example when you run `npm start` it will first use contentful-hugo to pull Contentful data then start hugo server. In the same way when you do the command `npm run build` it will first use contentful-hugo to pull Contentful data then run `hugo --minify` to build a minified version of your hugo site.
+
+### Javascript Usage
+
+You can also import this libraries core methods and use it in part of a nodejs environment
+
+#### Simple Example
+
+```js
+const { loadConfig, fetchDataFromContentful } = require('contentful-hugo');
+
+// standard mode
+loadConfig().then(config => {
+    // will generate files according to config
+    fetchDataFromContentful(config);
+});
+
+// preview mode
+loadConfig().then(config => {
+    fetchDataFromContentful(config, true);
+});
+```
+
+#### Custom Config Object
+
+```js
+const { fetchDataFromContentful } = require('contentful-hugo');
+
+const myConfig = {
+    contentful: {
+        space: 'my-space-id',
+        token: 'my-token',
+        previewToken: 'my-preview-token',
+        environment: 'my-env-id',
+    },
+    singleTypes: [
+        // single types go here
+    ],
+    repeatableTypes: [
+        // repeatable types go here
+    ],
+};
+
+fetchDataFromContentful(myConfig);
+```
+
+#### Import / Export
+
+ES6 style imports are also supported
+
+```js
+import { fetchDataFromContentful } from 'contentful-hugo';
+```
 
 ### Error Messages
 
